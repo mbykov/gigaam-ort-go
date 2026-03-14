@@ -145,7 +145,7 @@ fmt.Println(stats)
 
 [Yalue](https://github.com/yalue/onnxruntime_go) - за отличную Go обертку для ONNX Runtime
 
-[AltLinux](https://www.basealt.ru/) - за неизменное удовольствие
+[AltLinux](https://www.basealt.ru/) - за неизменное надежное удовольствие
 
 Сообществу Open Source - за вдохновение и инструменты
 
