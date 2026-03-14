@@ -87,14 +87,11 @@ func main() {
 
 ## Тестирование производительности
 
-# Базовый тест: 10 пользователей, 10 запросов каждый
+### Базовый тест: 10 пользователей, 10 запросов каждый
 go run cmd/parallel.go -audio cmd/example.wav -users 10 -requests 10
 
-# Нагрузочный тест: 20 пользователей, 5 запросов
+### Нагрузочный тест: 20 пользователей, 5 запросов
 go run cmd/parallel.go -audio cmd/example.wav -users 20 -requests 5
-
-# Сохранить результаты в файл
-go run cmd/parallel.go -audio cmd/example.wav -users 10 -requests 10 > results.txt
 
 ## Интеграция с LLM
 
