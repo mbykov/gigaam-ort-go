@@ -2,12 +2,12 @@
 
 ## Russian
 
-Go модуль для распознавания речи с использованием модели **GigaAM** от Сбера.
+Go модуль для распознавания речи с использованием модели **GigaAM e2e onnx** от Сбера.
 Предназначен для интеграции в пайплайны обработки аудио, особенно в связке с LLM.
 
 ## Особенности
 
-- 🚀 **Высокая производительность**: параллельная обработка запросов (45% быстрее версии с мьютексом)
+- 🚀 **Высокая производительность**: параллельная обработка запросов
 - 💾 **Эффективная память**: всего ~50 MB на пике (незначительно на фоне LLM)
 - 🔧 **Простая интеграция**: готов к использованию в микросервисной архитектуре
 - 📊 **Мониторинг**: встроенная статистика памяти и времени выполнения
@@ -17,7 +17,7 @@ Go модуль для распознавания речи с использов
 
 - Go 1.25 или выше
 - ONNX Runtime (libonnxruntime.so)
-- Модель GigaAM (encoder.int8.onnx, decoder.onnx, joiner.onnx, tokens.txt)
+- Модель GigaAM e2e rnnt: (encoder.int8.onnx, decoder.onnx, joiner.onnx, tokens.txt)
 
 ## Установка
 
@@ -26,11 +26,8 @@ Go модуль для распознавания речи с использов
 export LD_LIBRARY_PATH=/home/michael/go/ort/lib:$LD_LIBRARY_PATH
 
 # Клонируйте репозиторий
-git clone <your-repo>
-cd bhl-gigaam-go
-
-# Проверьте структуру проекта
-tree -L 2
+git clone https://github.com/mbykov/gigaam-ort-go
+cd gigaam-ort-go
 ```
 
 ### Конфигурация
@@ -54,7 +51,7 @@ import (
     "log"
     "os"
 
-    "github.com/mbykov/bhl-gigaam-go"
+    "github.com/mbykov/gigaam-ort-go"
 )
 
 func main() {
