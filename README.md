@@ -139,7 +139,6 @@ fmt.Println(stats)
 # Благодарности
 
 
-```shell
 [Сбер](https://github.com/salute-developers/GigaAM) - за открытую модель GigaAM
 
 [chat.deepseek.com](https://chat.deepseek.com) и [Gemini](https://google.com/ai) - за консультации и помощь в оптимизации кода
@@ -151,7 +150,6 @@ fmt.Println(stats)
 Сообществу Open Source - за вдохновение и инструменты
 
 Особая благодарность всем, кто тестировал и помогал улучшать производительность модуля.
-```
 
 # Лицензия
 
