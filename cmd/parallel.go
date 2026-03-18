@@ -41,7 +41,7 @@ func main() {
 
     // Создаем один экземпляр модуля (БЕЗ МЬЮТЕКСА)
     fmt.Printf("🔧 Создаем один экземпляр GigaAM-PAR модуля (без мьютекса)\n")
-    module, err := gigaam.NewPar(cfg)
+    module, err := gigaam.New(cfg)
     if err != nil {
         log.Fatalf("❌ Ошибка создания модуля: %v", err)
     }
@@ -70,7 +70,7 @@ func main() {
     printResultsPar(results, *users, *requests)
 }
 
-func runParallelTestPar(module *gigaam.GigaAMModulePar, audioData []byte, numUsers, requestsPerUser int) []UserResultPar {
+func runParallelTestPar(module *gigaam.GigaAMModule, audioData []byte, numUsers, requestsPerUser int) []UserResultPar {
     var wg sync.WaitGroup
     results := make([]UserResultPar, numUsers)
     startTime := time.Now()

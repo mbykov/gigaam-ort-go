@@ -47,8 +47,8 @@ type ModuleStats struct {
     LastMemory    uint64
 }
 
-// GigaAMModulePar представляет модуль для распознавания речи (версия без мьютекса)
-type GigaAMModulePar struct {
+// GigaAMModule Parallel представляет модуль для распознавания речи (версия без мьютекса)
+type GigaAMModule struct {
     config      Config
     tokens      map[int]string
     blankID     int64
@@ -72,8 +72,8 @@ type GigaAMModulePar struct {
 }
 
 // NewPar создает новый экземпляр GigaAM модуля (без мьютекса)
-func NewPar(cfg Config) (*GigaAMModulePar, error) {
-    module := &GigaAMModulePar{
+func New(cfg Config) (*GigaAMModule, error) {
+    module := &GigaAMModule{
         config:     cfg,
         blankID:    1024,
         predHidden: 320,
@@ -96,7 +96,7 @@ func NewPar(cfg Config) (*GigaAMModulePar, error) {
 }
 
 // initONNX инициализирует ONNX Runtime и загружает модели
-func (m *GigaAMModulePar) initONNX() error {
+func (m *GigaAMModule) initONNX() error {
     var initErr error
 
     // Инициализируем ONNX Runtime один раз
@@ -145,7 +145,7 @@ func (m *GigaAMModulePar) initONNX() error {
 }
 
 // ProcessAudio обрабатывает аудио (версия без мьютекса)
-func (m *GigaAMModulePar) ProcessAudio(pcm []byte) (Result, error) {
+func (m *GigaAMModule) ProcessAudio(pcm []byte) (Result, error) {
     startTime := time.Now()
 
     // Статистика памяти до обработки
@@ -349,7 +349,7 @@ func (m *GigaAMModulePar) ProcessAudio(pcm []byte) (Result, error) {
 }
 
 // createEncoderSession создает сессию энкодера с временными тензорами
-func (m *GigaAMModulePar) createEncoderSession(numFrames int) (*ort.AdvancedSession, *ort.Tensor[float32], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[int64], error) {
+func (m *GigaAMModule) createEncoderSession(numFrames int) (*ort.AdvancedSession, *ort.Tensor[float32], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[int64], error) {
     outSteps := numFrames / 4
 
     // Создаем тензоры
@@ -401,7 +401,7 @@ func (m *GigaAMModulePar) createEncoderSession(numFrames int) (*ort.AdvancedSess
 }
 
 // createDecoderSession создает сессию декодера
-func (m *GigaAMModulePar) createDecoderSession() (*ort.AdvancedSession, *ort.Tensor[int64], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[float32], *ort.Tensor[float32], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[float32], error) {
+func (m *GigaAMModule) createDecoderSession() (*ort.AdvancedSession, *ort.Tensor[int64], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[float32], *ort.Tensor[float32], *ort.Tensor[int64], *ort.Tensor[float32], *ort.Tensor[float32], error) {
     // Инициализация декодера
     hData := make([]float32, m.predLayers*1*m.predHidden)
     cData := make([]float32, m.predLayers*1*m.predHidden)
@@ -501,7 +501,7 @@ func (m *GigaAMModulePar) createDecoderSession() (*ort.AdvancedSession, *ort.Ten
 }
 
 // createJoinerSession создает сессию джойнера
-func (m *GigaAMModulePar) createJoinerSession(encStepTensor *ort.Tensor[float32], decOutTensor *ort.Tensor[float32]) (*ort.AdvancedSession, *ort.Tensor[float32], error) {
+func (m *GigaAMModule) createJoinerSession(encStepTensor *ort.Tensor[float32], decOutTensor *ort.Tensor[float32]) (*ort.AdvancedSession, *ort.Tensor[float32], error) {
     jointOutData := make([]float32, 1*1*1*(int(m.blankID)+1))
     jointOutTensor, err := ort.NewTensor(ort.NewShape(1, 1, 1, int64(m.blankID)+1), jointOutData)
     if err != nil {
@@ -525,7 +525,7 @@ func (m *GigaAMModulePar) createJoinerSession(encStepTensor *ort.Tensor[float32]
 }
 
 // ProcessText для совместимости
-func (m *GigaAMModulePar) ProcessText(text string) (Result, error) {
+func (m *GigaAMModule) ProcessText(text string) (Result, error) {
     return Result{
         Text:        text,
         IsProcessed: true,
@@ -533,7 +533,7 @@ func (m *GigaAMModulePar) ProcessText(text string) (Result, error) {
 }
 
 // updateStats обновляет статистику памяти
-func (m *GigaAMModulePar) updateStats() {
+func (m *GigaAMModule) updateStats() {
     var mstat runtime.MemStats
     runtime.ReadMemStats(&mstat)
     m.stats.mu.Lock()
@@ -545,7 +545,7 @@ func (m *GigaAMModulePar) updateStats() {
 }
 
 // printMemStats выводит статистику памяти
-func (m *GigaAMModulePar) printMemStats(context string) {
+func (m *GigaAMModule) printMemStats(context string) {
     var mstat runtime.MemStats
     runtime.ReadMemStats(&mstat)
     fmt.Printf("📈 Память [%s]: Выделено: %d MB, Всего: %d MB, Система: %d MB, GC циклов: %d\n",
@@ -557,7 +557,7 @@ func (m *GigaAMModulePar) printMemStats(context string) {
 }
 
 // GetStats возвращает статистику модуля
-func (m *GigaAMModulePar) GetStats() string {
+func (m *GigaAMModule) GetStats() string {
     m.stats.mu.Lock()
     defer m.stats.mu.Unlock()
     avgDuration := time.Duration(0)
@@ -574,7 +574,7 @@ func (m *GigaAMModulePar) GetStats() string {
 }
 
 // Close освобождает ресурсы
-func (m *GigaAMModulePar) Close() {
+func (m *GigaAMModule) Close() {
     fmt.Println("🔄 Освобождение ресурсов...")
     m.printMemStats("Перед закрытием")
 
